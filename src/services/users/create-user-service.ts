@@ -1,11 +1,27 @@
-// import { PostgresSource } from "../../db/source";
-// import { User } from "../../models/user";
+import { PostgresSource } from "../../db/source";
+import { User, UserRole } from "../../models/user";
 
 export class CreateUserService {
-  public async execute(): Promise<{id: number}> {
-    // const userRepository = PostgresSource.getRepository(User);
+  public async execute(
+    username: string,
+    login: string,
+    email: string,
+    password: string,
+    role: UserRole = UserRole.CLIENT
+  ): Promise<{id: number, message?: string}> {
+    const userRepository = PostgresSource.getRepository(User);
+    const existingUsers = await userRepository.findBy([{login}, {email}]);
 
-    return {id: 1};
-    // Code...
+    if(existingUsers.length !== 0) {
+      return {
+        message: "Пользователь с такими данными уже существует",
+        id: -1,
+      };
+    }
+
+    const user = new User(username, login, email, password, role);
+    const savedUser = await userRepository.save(user);
+
+    return {id: savedUser.id};
   }
 }

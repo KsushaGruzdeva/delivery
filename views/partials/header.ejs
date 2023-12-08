@@ -21,8 +21,14 @@
             <input type="search" class="form-control form-control-dark" placeholder="Поиск..." aria-label="Search">
           </form>
           <div class="text-end">
-            <button type="button" class="btn btn-success me-2">Войти</button>
-            <button type="button" class="btn btn-outline-secondary">Регистрация</button>
+            <% if(tokenData) { %>
+            <form action="/api/auth/logout" method="post">
+              <button type="submit" class="btn btn-secondary">Выход</button>
+            </form>
+            <% } else { %>
+              <a href="/auth/login" class="btn btn-success me-2">Войти</a>
+              <a href="/auth/signup" class="btn btn-outline-secondary">Регистрация</a>
+            <% } %>
           </div>
         </div>
       </div>

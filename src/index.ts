@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import cookie from "cookie-parser";
+import cors from "cors";
 import express from "express";
 import path from "path";
 
@@ -21,9 +22,16 @@ const PORT = 4000;
 
 app.set("view engine", "ejs");
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.use(cookie());
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
 app.use(router);

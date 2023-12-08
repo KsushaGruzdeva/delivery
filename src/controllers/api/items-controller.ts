@@ -13,13 +13,6 @@ itemsApiRouter.post("/api/items/create", async (req, res) => {
   if(!name || !quantity || isNaN(quantityNumber)) {
     const referer = req.header("Referer") || "/";
     return res.redirect(referer);
-
-    // return res.render("items/create-item", {
-    //   message: {
-    //     alertClass: "alert-danger",
-    //     message: "Необходимо заполнить все поля"
-    //   }
-    // });
   }
 
   const item = new Item(name, quantityNumber);

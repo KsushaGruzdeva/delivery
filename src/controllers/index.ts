@@ -3,6 +3,7 @@ import { Router } from "express";
 import { authApiRouter } from "./api/auth-controller";
 import { itemsApiRouter } from "./api/items-controller";
 
+import { addTokenData } from "../middlewares/add-token-data";
 import { adminRouter } from "./views/admin-view";
 import { authRouter } from "./views/auth-view";
 import { homeRouter } from "./views/home-view";
@@ -22,6 +23,8 @@ router.use(adminRouter);
 router.use(authApiRouter);
 router.use(itemsApiRouter);
 
-router.all("*", (_, res) => {
-  return res.render("errors/not-found");
+router.all("*", addTokenData, (req, res) => {
+  return res.render("errors/not-found", {
+    tokenData: req.tokenData
+  });
 });
