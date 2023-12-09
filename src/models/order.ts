@@ -1,15 +1,12 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { Item } from "./item";
 import { User } from "./user";
 
-@Entity("order")
+@Entity("orders")
 export class Order {
   @PrimaryGeneratedColumn()
   public id!: number;
-
-  @Column({nullable: false})
-  public title: string;
 
   @Column({nullable: false})
   public location: string;
@@ -17,8 +14,12 @@ export class Order {
   @ManyToOne(() => User, (user) => user.id, {eager: true})
   public client: User;
 
+  @ManyToOne(() => User, (user) => user.id, {eager: true, nullable: true})
+  public assignedCourier: User | null;
+
   @ManyToMany(() => Item, {eager: true})
-  public card!: Item[];
+  @JoinTable()
+  public cart!: Item[];
 
   @Column({nullable: false})
   public status: OrderStatus;
@@ -32,9 +33,9 @@ export class Order {
   @Column("timestamp", {nullable: true})
   public deliveredAt: Date | null;
 
-  public constructor(title: string, location: string, client: User, status?: OrderStatus) {
-    this.title = title;
+  public constructor(location: string, client: User, status?: OrderStatus) {
     this.client = client;
+    this.assignedCourier = null;
     this.location = location;
     this.status = status || OrderStatus.CREATED;
     this.cardFilled = false;

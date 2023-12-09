@@ -1,6 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-import { Order } from "./order";
 
 @Entity("users")
 export class User {
@@ -21,9 +20,6 @@ export class User {
 
   @Column({nullable: false})
   public role: UserRole;
-
-  @OneToMany(() => Order, (order) => order.client)
-  public orders!: Order[];
 
   @Column("timestamp", {nullable: false})
   public createdAt: Date;
