@@ -41,7 +41,7 @@ export class User {
 export enum UserRole {
   CLIENT,
   COURIER,
-  DISPATCHER,
   STOREKEEPER,
+  DISPATCHER,
   ADMIN
 }

@@ -7,8 +7,16 @@ export class CreateUserService {
     login: string,
     email: string,
     password: string,
+    passwordConfirm: string,
     role: UserRole = UserRole.CLIENT
   ): Promise<{id: number, message?: string}> {
+    if(password.trim() !== passwordConfirm.trim()) {
+      return ({
+        message: "Пароли должны совпадать",
+        id: -1
+      });
+    }
+
     const userRepository = PostgresSource.getRepository(User);
     const existingUsers = await userRepository.findBy([{login}, {email}]);
 

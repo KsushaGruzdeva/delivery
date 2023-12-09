@@ -52,17 +52,7 @@ authApiRouter.post("/api/auth/signup", addTokenData, async (req, res) => {
     });
   }
 
-  if(password.trim() !== passwordConfirm.trim()) {
-    return res.render("auth/signup", {
-      message: {
-        text: "Пароли должны совпадать",
-        alertClass: "alert-danger"
-      },
-      tokenData: req.tokenData
-    });
-  }
-
-  const response = await new CreateUserService().execute(username, login, email, password, UserRole.CLIENT);
+  const response = await new CreateUserService().execute(username, login, email, password, passwordConfirm, UserRole.CLIENT);
 
   if(response.message) {
     return res.render("auth/signup", {
