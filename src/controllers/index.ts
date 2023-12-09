@@ -5,6 +5,7 @@ import { itemsApiRouter } from "./api/items-controller";
 
 import { addTokenData } from "../middlewares/add-token-data";
 import { employeesApiRouter } from "./api/employees-controller";
+import { ordersApiRouter } from "./api/orders-controller";
 import { adminRouter } from "./views/admin-view";
 import { authRouter } from "./views/auth-view";
 import { employeesRouter } from "./views/employees-view";
@@ -26,6 +27,7 @@ router.use(employeesRouter);
 router.use(authApiRouter);
 router.use(itemsApiRouter);
 router.use(employeesApiRouter);
+router.use(ordersApiRouter);
 
 router.all("*", addTokenData, (req, res) => {
   return res.render("errors/not-found", {
