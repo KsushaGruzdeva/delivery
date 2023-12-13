@@ -16,7 +16,7 @@ adminRouter.get("/admin/users", addTokenData, isAuthorized, (req, res) => {
   return res.render("admin/users", {
     users: [
       {id: 1, name: "Vlad", email: "example@gmail.com", role: "ADMIN"},
-      {id: 2, name: "Nikita Hui", email: "some-email@gmail.com", role: "USER"}
+      {id: 2, name: "Nikita", email: "some-email@gmail.com", role: "USER"}
     ],
     tokenData: req.tokenData
   });
