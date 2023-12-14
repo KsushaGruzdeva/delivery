@@ -1,5 +1,5 @@
 import { PostgresSource } from "../../db/source";
-import { Order } from "../../models/order";
+import { Order, OrderStatus } from "../../models/order";
 import { User, UserRole } from "../../models/user";
 
 export class GetAllOrdersService {
@@ -35,7 +35,7 @@ export class GetAllOrdersService {
       //   })
       // };
     } else if(issuer.role === UserRole.STOREKEEPER) {
-      query.where("order.cardFilled = false");
+      query.where("order.cardFilled = false AND order.status = :status", {status: OrderStatus.CREATED});
 
       // filters = {
       //   cardFilled: false
