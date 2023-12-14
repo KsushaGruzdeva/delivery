@@ -4,7 +4,7 @@ import { PostgresSource } from "../../db/source";
 import { addTokenData } from "../../middlewares/add-token-data";
 import { Item } from "../../models/item";
 import { GetAllOrdersService } from "../../services/orders/get-all-orders-service";
-import { Order, OrderStatus } from "../../models/order";
+import { Order } from "../../models/order";
 
 export const orderRouter = Router();
 
@@ -35,16 +35,15 @@ orderRouter.get("/orders_storekeeper/:id", addTokenData, async (req, res) => {
     return res.redirect("/orders");
   }
 
-  const orders = await PostgresSource.getRepository(Order).find({
+  const order = await PostgresSource.getRepository(Order).findOne({
     where: {
       id : id_order,
-      status: OrderStatus.CREATED
     }
   });
 
   return res.render("orders/order-storekeeper", {
     tokenData: req.tokenData,
     message: null,
-    orders
+    order
   });
 });
