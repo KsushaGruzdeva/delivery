@@ -1,9 +1,10 @@
+import { ORDER_STATUS_VALUES } from "../../constants/presenter";
 import { PostgresSource } from "../../db/source";
 import { Order, OrderStatus } from "../../models/order";
 import { User, UserRole } from "../../models/user";
 
 export class GetAllOrdersService {
-  public async execute(issuerId: number | undefined): Promise<{orders: Order[], ok: boolean, message?: string}> {
+  public async execute(issuerId: number | undefined): Promise<{orders: any[], ok: boolean, message?: string}> {
     const issuer = await PostgresSource.getRepository(User).findOneBy({id: issuerId || -1});
 
     const query = PostgresSource.getRepository(Order).createQueryBuilder("order")
@@ -21,33 +22,23 @@ export class GetAllOrdersService {
     if(issuer.role === UserRole.CLIENT) {
       query.where("order.client.id = :id", {id: issuer.id});
 
-      // filters = {
-      //   client: {
-      //     id: issuer.id
-      //   }
-      // };
     } else if(issuer.role === UserRole.COURIER) {
-      query.where("order.assignedCourier IS NOT NULL AND order.assignedCourier.id = ?", [issuer.id]);
+      query.where("order.assignedCourier IS NOT NULL AND order.assignedCourier.id = :id", {id: issuer.id});
 
-      // filters = {
-      //   assignedCourier: And(Not(IsNull()), {
-
-      //   })
-      // };
     } else if(issuer.role === UserRole.STOREKEEPER) {
-      query.where("order.cardFilled = false AND order.status = :status", {status: OrderStatus.CREATED});
+      query.where("order.cardFilled = false");
 
-      // filters = {
-      //   cardFilled: false
-      // };
+    } else if (issuer.role === UserRole.DISPATCHER) {
+      query.where("order.status = :status AND order.assignedCourier IS NULL", {status: OrderStatus.PACKED})
     }
 
     const orders = await query.getMany();
+    const normalizedOrders = orders.map(order => ({...order, status: ORDER_STATUS_VALUES[order.status]}))
 
     console.log(orders);
 
     return {
-      orders,
+      orders: normalizedOrders,
       ok: true,
     };
   }

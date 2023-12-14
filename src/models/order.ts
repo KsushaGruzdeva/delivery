@@ -25,7 +25,7 @@ export class Order {
   public status: OrderStatus;
 
   @Column({nullable: false, default: false})
-  public cardFilled: boolean;
+  public cartFilled: boolean;
 
   @Column("timestamp", {nullable: false})
   public createdAt: Date;
@@ -38,7 +38,7 @@ export class Order {
     this.assignedCourier = null;
     this.location = location;
     this.status = status || OrderStatus.CREATED;
-    this.cardFilled = false;
+    this.cartFilled = false;
     this.createdAt = new Date();
     this.deliveredAt = null;
   }

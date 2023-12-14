@@ -5,6 +5,7 @@ import { addTokenData } from "../../middlewares/add-token-data";
 import { Item } from "../../models/item";
 import { CreateOrderService } from "../../services/orders/create-order-service";
 import { DeleteOrderService } from "../../services/orders/delete-order-service";
+import { Order, OrderStatus } from "../../models/order";
 
 export const ordersApiRouter = Router();
 
@@ -49,4 +50,28 @@ ordersApiRouter.post("/api/orders/delete/:orderId", addTokenData, async (req, re
 
   await new DeleteOrderService().execute(id, req.tokenData!.id);
   return res.redirect("/orders");
+});
+
+ordersApiRouter.post("/api/orders/fill_cart/:id", addTokenData, async (req, res) =>{
+  const {id} = req.params;
+  const orderId = parseInt(id!);
+
+  if(!id || isNaN(orderId)) {
+    return res.redirect("/orders");
+  }
+  const orderRepository = PostgresSource.getRepository(Order);
+  const order = await orderRepository.findOneBy({id: orderId});
+
+  if (order === null){
+    return res.redirect("/orders");
+  }
+
+  order.status = OrderStatus.PACKED;
+  order.cartFilled = true;
+
+  await orderRepository.save(order);
+
+  const referer = req.header("Referer") || "/";
+
+  return res.redirect(referer);
 });
