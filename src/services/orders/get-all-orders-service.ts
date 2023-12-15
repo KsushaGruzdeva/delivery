@@ -23,10 +23,10 @@ export class GetAllOrdersService {
       query.where("order.client.id = :id", {id: issuer.id});
 
     } else if(issuer.role === UserRole.COURIER) {
-      query.where("order.assignedCourier IS NOT NULL AND order.assignedCourier.id = :id", {id: issuer.id});
+      query.where("order.assignedCourier IS NOT NULL AND order.assignedCourier.id = :id AND order.status = :status", {id: issuer.id, status: OrderStatus.DELIVERY_IN_PROGRESS});
 
     } else if(issuer.role === UserRole.STOREKEEPER) {
-      query.where("order.cardFilled = false");
+      query.where("order.status = :status", {status: OrderStatus.CREATED});
 
     } else if (issuer.role === UserRole.DISPATCHER) {
       query.where("order.status = :status AND order.assignedCourier IS NULL", {status: OrderStatus.PACKED})

@@ -1,9 +1,11 @@
 <%- include('../partials/header'); -%>
 <div class="d-flex justify-content-between align-items-center">
   <h4>Заказы</h4>
+  <% if (tokenData.role === 4 || tokenData.role === 0) { %>
   <a href="/out/create_order" class="btn btn-outline-primary btn-sm"
     >Добавить заказ</a
   >
+  <% } %>
 </div>
 <% if(orders.length === 0) { %>
 <div class="alert alert-light">Список пуст</div>
@@ -25,18 +27,25 @@
       <th scope="row"><%=order.id %></th>
       <td><%=order.location %></td>
       <td>
-        <a href="/orders_storekeeper/<%=order.id %>"> 
+        <% if (tokenData.role === 4 || tokenData.role === 2 || tokenData.role === 0) { %>
+        <a href="/orders_storekeeper/<%=order.id %>">
           <%= order.cart.map(item => item.name).join(", ") %>
         </a>
-      </td>
-      
-      <td><%=new Date(order.createdAt).toDateString() %></td>
-      <td>
-        <%= order.status.label%> 
-        <% if (order.status.value === "DELIVERED") { %>
-          <%= new Date(order.deliveredAt).toDateString() %> 
+        <% } else if (tokenData.role === 1) { %>
+          <a href="/orders_courier/<%=order.id %>">
+            <%= order.cart.map(item => item.name).join(", ") %>
+          </a>
         <% } %>
       </td>
+
+      <td><%=new Date(order.createdAt).toDateString() %></td>
+      <td>
+        <%= order.status.label%>
+        <% if (order.status.value === "DELIVERED") { %>
+          <%= new Date(order.deliveredAt).toDateString() %>
+        <% } %>
+      </td>
+      <% if (tokenData.role === 4 || tokenData.role === 0) { %>
       <td>
         <form action="/api/orders/delete/<%=order.id %>" method="post">
           <button type="submit" class="btn btn-outline-danger btn-sm">
@@ -44,6 +53,7 @@
           </button>
         </form>
       </td>
+      <% } %>
     </tr>
     <% } %>
   </tbody>

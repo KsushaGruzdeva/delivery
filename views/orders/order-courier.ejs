@@ -16,16 +16,16 @@
     <% } %>
   </tbody>
 </table>
-<% if (tokenData.role === 2) { %>
-<% if(!order.cartFilled){ %>
-<form action="/api/orders/fill_cart/<%=order.id %>" method="post">
+<% if (tokenData.role === 1) { %>
+<% if(order.status === 2){ %>
+<form action="/api/orders/non-fill_cart/<%=order.id %>" method="post">
   <button type="submit" class="btn btn-outline-primary btn-sm">
-    Собрать заказ
+    Доставить заказ
   </button>
 </form>
 <% } else {%>
 <div class="alert alert-light" role="alert">
-  Заказ собран
+  Заказ доставлен
 </div>
 <% } %>
 <% } %>

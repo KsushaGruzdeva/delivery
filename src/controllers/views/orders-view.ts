@@ -47,3 +47,24 @@ orderRouter.get("/orders_storekeeper/:id", addTokenData, async (req, res) => {
     order
   });
 });
+
+orderRouter.get("/orders_courier/:id", addTokenData, async (req, res) => {
+  const {id} = req.params;
+  const id_order = parseInt(id!);
+
+  if(!id || isNaN(id_order)) {
+    return res.redirect("/orders");
+  }
+
+  const order = await PostgresSource.getRepository(Order).findOne({
+    where: {
+      id : id_order,
+    }
+  });
+
+  return res.render("orders/order-courier", {
+    tokenData: req.tokenData,
+    message: null,
+    order
+  });
+});
