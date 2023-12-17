@@ -6,6 +6,8 @@ import { Item } from "../../models/item";
 import { CreateOrderService } from "../../services/orders/create-order-service";
 import { DeleteOrderService } from "../../services/orders/delete-order-service";
 import { Order, OrderStatus } from "../../models/order";
+import { GetAllCourierService } from "../../services/dispatcher/get-all-couriers-services";
+import { User } from "../../models/user"
 
 export const ordersApiRouter = Router();
 
@@ -76,7 +78,7 @@ ordersApiRouter.post("/api/orders/fill_cart/:id", addTokenData, async (req, res)
   return res.redirect(referer);
 });
 
-ordersApiRouter.post("/api/orders/non-fill_cart/:id", addTokenData, async (req, res) =>{
+ordersApiRouter.post("/api/orders/courier/:id", addTokenData, async (req, res) =>{
   const {id} = req.params;
   const orderId = parseInt(id!);
 
@@ -98,4 +100,54 @@ ordersApiRouter.post("/api/orders/non-fill_cart/:id", addTokenData, async (req, 
   const referer = req.header("Referer") || "/";
 
   return res.redirect(referer);
+});
+
+ordersApiRouter.post("/api/orders/dispatcher/:id", addTokenData, async (req, res) =>{
+  const {id} = req.params;
+  const {assignedCourierId} = req.body;
+
+  const orderId = parseInt(id!);
+  const courierId = parseInt(assignedCourierId!);
+
+  if(!id || isNaN(orderId)) {
+    return res.redirect("/orders");
+  }
+
+  const orderRepository = PostgresSource.getRepository(Order);
+  const order = await orderRepository.findOneBy({id: orderId});
+
+  if (order === null){
+    return res.redirect("/orders");
+  }
+
+  const couriers = await new GetAllCourierService().execute(req.tokenData!.id);
+
+  if(couriers.couriers.length === 0 || isNaN(courierId) || !assignedCourierId) {
+    return res.render("dispatcher/order-dispatcher", {
+      message: {
+        text: "Необходимо заполнить все поля",
+        alertClass: "alert-danger"
+      },
+      tokenData: req.tokenData,
+      order,
+      couriers: couriers.couriers,
+    });
+  }
+
+  const userRepository = PostgresSource.getRepository(User);
+  const courier = await userRepository.findOneBy({id: courierId});
+
+  if (courier === null){
+    return res.redirect("/orders");
+  }
+
+  order.status = OrderStatus.DELIVERY_IN_PROGRESS;
+
+  order.assignedCourier = courier;
+
+  await orderRepository.save(order);
+
+  // const referer = req.header("Referer") || "/";
+
+  return res.redirect("/orders");
 });

@@ -18,7 +18,7 @@
 </table>
 <% if (tokenData.role === 1) { %>
 <% if(order.status === 2){ %>
-<form action="/api/orders/non-fill_cart/<%=order.id %>" method="post">
+<form action="/api/orders/courier/<%=order.id %>" method="post">
   <button type="submit" class="btn btn-outline-primary btn-sm">
     Доставить заказ
   </button>

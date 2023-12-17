@@ -35,7 +35,11 @@
           <a href="/orders_courier/<%=order.id %>">
             <%= order.cart.map(item => item.name).join(", ") %>
           </a>
-        <% } %>
+          <% } else if (tokenData.role === 3) { %>
+            <a href="/orders_dispatcher/<%=order.id %>">
+              <%= order.cart.map(item =>item.name).join(", ") %>
+            </a>
+          <% } %>
       </td>
 
       <td><%=new Date(order.createdAt).toDateString() %></td>
