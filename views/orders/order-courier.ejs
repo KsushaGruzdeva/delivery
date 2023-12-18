@@ -16,6 +16,16 @@
     <% } %>
   </tbody>
 </table>
+<div class="mb-3">
+<table>
+  <tread>
+    <th scope="col">Адрес доставки</th>
+  </tread>
+  <tbody>
+    <td><%=order.location %></td>
+  </tbody>
+</table>
+</div>
 <% if (tokenData.role === 1) { %>
 <% if(order.status === 2){ %>
 <form action="/api/orders/courier/<%=order.id %>" method="post">

@@ -29,7 +29,7 @@ export class GetAllOrdersService {
       query.where("order.status = :status", {status: OrderStatus.CREATED});
 
     } else if (issuer.role === UserRole.DISPATCHER) {
-      query.where("order.status = :status AND order.assignedCourier IS NULL", {status: OrderStatus.PACKED})
+      query.where("order.status = :status OR order.status = :status_1 OR order.status = :status_2", {status: OrderStatus.PACKED, status_1: OrderStatus.DELIVERY_IN_PROGRESS, status_2: OrderStatus.DELIVERED})
     }
 
     const orders = await query.getMany();
